@@ -33,7 +33,6 @@ public class ScrambleService {
         if (cube.equalsIgnoreCase("2x2")) {
             defaultMoves = new String[] {"U", "F", "R"};
             defaultSuffix = new String[] {"", "'", "2"};
-
         } else if (cube.equalsIgnoreCase("3x3")) {
             defaultMoves = new String[] {"U", "D", "F", "B", "R", "L"};
             defaultSuffix = new String[] {"", "'", "2"};
@@ -49,6 +48,8 @@ public class ScrambleService {
         } else if (cube.equalsIgnoreCase("7x7")) {
             defaultMoves = new String[] {"U", "D", "F", "B", "R", "L", "Uw", "Dw", "Fw", "Bw", "Rw", "Lw", "3Uw", "3Dw", "3Fw", "3Bw", "3Rw", "3Lw"};
             defaultSuffix = new String[] {"", "'", "2"};
+        } else if (cube.equalsIgnoreCase("pyraminx")) {
+            return generatePyraminxScramble();
         }
 
         return generateScramble(defaultMoves, defaultSuffix, cubeScrambleLength.get(cube));
@@ -65,14 +66,57 @@ public class ScrambleService {
 
             // If move is not first
             if (i > 0) {
-                while (scrambleList.get(i - 1).contains(randomMove)) {
+                while (scrambleList.get(i - 1).contains(randomMove))
                     randomMove = choice(defaultMoves);
-                }
             }
             // Add move to list
             scrambleList.add(String.format("%s%s ",  randomMove, randomSuffix));
         }
 
+        StringBuilder output = new StringBuilder();
+
+        // Convert list to string
+        for (String move : scrambleList) {
+            output.append(move);
+        }
+
+        return output.toString();
+    }
+
+    public String generatePyraminxScramble() {
+
+        int scrambleLength = 11;
+
+        String[] defaultMoves = {"U", "R", "L", "B"};
+        String[] defaultSuffix = {"", "'"};
+        String[] extendMoves = {"u", "r", "l", "b"};
+
+        List<String> scrambleList = new ArrayList<>();
+
+        for (int i = 0; i < scrambleLength; i++) {;
+            String randomMove, randomSuffix;
+            if (i < 8) {
+                randomMove = choice(defaultMoves);
+                randomSuffix = choice(defaultSuffix);
+
+                // If move is not first
+                if (i > 0) {
+                    while (scrambleList.get(i - 1).contains(randomMove))
+                        randomMove = choice(defaultMoves);
+                }
+                // Add move to list
+                scrambleList.add(String.format("%s%s ", randomMove, randomSuffix));
+            } else {
+                randomMove = choice(extendMoves);
+                randomSuffix = choice(defaultSuffix);
+
+                while (scrambleList.get(i - 1).contains(randomMove))
+                    randomMove = choice(extendMoves);
+
+                // Add move to list
+                scrambleList.add(String.format("%s%s ", randomMove, randomSuffix));
+            }
+        }
         StringBuilder output = new StringBuilder();
 
         // Convert list to string
